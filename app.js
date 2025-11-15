@@ -6,6 +6,8 @@ import authRouter from "./routes/auth.router.js";
 import userRouter from './routes/user.router.js';
 import courseRouter from "./routes/course.router.js";
 import connectDB from './database/mongodb.js';
+import errorMiddleware from './middlewares/error.middleware.js';
+import cookieParser from 'cookie-parser';
 
 
 const app = express(); //app is an instance of express
@@ -14,7 +16,18 @@ const app = express(); //app is an instance of express
  or to specify where to get to that route or the api that when called or access calls
  the route
 */
-app.use(express.json())
+
+//other built-in middleware by express
+app.use(express.json())//help handle json request
+
+//helps us to process the form data sent via HTML forms in a simple format
+app.use(express.urlencoded({ extended: false }))
+
+//this one is to read cookie from incoming request as your app can store user data
+app.use(cookieParser)
+
+
+app.use(errorMiddleware)
 app.use('/api/v1/auth', authRouter); //so one of the api can be api/v1/auth/signin and when you call this api it use the signin route in the authRouter
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/subscription', subscriptionRouter);
